@@ -1,4 +1,3 @@
-# Use a compatible Node.js base image
 FROM node:18.20.2
 
 # Install pnpm globally
@@ -21,4 +20,3 @@ EXPOSE 3000
 
 # Run Payload CMS
 CMD ["pnpm", "run", "start"]
-
