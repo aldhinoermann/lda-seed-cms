@@ -1,32 +1,22 @@
-ARG NODE_VERSION=14
+FROM node:18.20.2
 
-# Setup the build container.
-FROM node:${NODE_VERSION}-alpine AS build
+# Install pnpm globally
+RUN npm install -g pnpm
 
-WORKDIR /home/node
+# Set working directory
+WORKDIR /app
 
-# Install dependencies.
-COPY package*.json .
+# Copy package.json, pnpm-lock.yaml
+COPY package.json pnpm-lock.yaml ./
 
-RUN yarn install
+# Install dependencies with pnpm
+RUN pnpm install
 
-# Copy the source files.
-COPY src src
-COPY tsconfig.json .
+# Copy the rest of the application code
+COPY . .
 
-# Build the application.
-RUN yarn build && yarn cache clean
-
-# Setup the runtime container.
-FROM node:${NODE_VERSION}-alpine
-
-WORKDIR /home/node
-
-# Copy the built application.
-COPY --from=build /home/node /home/node
-
-# Expose the service's port.
+# Expose Payload CMS port
 EXPOSE 3000
 
-# Run the service.
-CMD ["yarn", "run", "serve"]
+# Run Payload CMS
+CMD ["pnpm", "run", "start"]
